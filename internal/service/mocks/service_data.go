@@ -7,13 +7,13 @@ import (
 var UserRequest *entity.CreateUserRequest = &entity.CreateUserRequest{
 	Name:     "Pancho",
 	Password: "123",
-	Mail:     "francisco.mfu@gmail.com",
+	Mail:     "francisco.mfu@lala.com",
 }
 
 var MockResponse *entity.User = &entity.User{
 	Name:     "Pancho",
 	Password: "123",
-	Mail:     "francisco.mfu@gmail.com",
+	Mail:     "francisco.mfu@lala.com",
 }
 
 var ErrorComun = "error"

@@ -50,7 +50,7 @@ func main() {
 
 	var svc service.Service
 	{
-		firestoreclient := client.NewFirestorerepository("json.json", "ltgc-99d6e", "users")
+		firestoreclient := client.NewFirestorerepository("firebase.json", "firebase", "users")
 		svc = service.MakeService(logger, firestoreclient)
 
 	}
