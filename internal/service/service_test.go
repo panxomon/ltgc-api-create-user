@@ -1,20 +1,27 @@
 package service_test
 
 import (
-	"fmt"
+	"context"
+	"ltgc-api-create-user/internal/client/mocks"
+	"ltgc-api-create-user/internal/service"
+	data "ltgc-api-create-user/internal/service/mocks"
+	"os"
 	"testing"
+
+	"github.com/go-kit/log"
 )
 
-func Test_Create_Service_OK(t *testing.T) {
+func Test_service(t *testing.T) {
 
-	//TODO
+	ctx := context.TODO()
+	logger := log.NewJSONLogger(log.NewSyncWriter(os.Stdout))
+	var svc service.Service
 
-	fmt.Println("Test_Create_Service_OK")
-	// mockClient := new(MockClient)
-	// mockRepository := new(MockRepository)
+	mock := new(mocks.Repository)
+	mock.On("CreateUser", ctx, &data.UserRequest).Return(*data.MockResponse, nil)
 
-	// service := MakeService(mockClient, mockRepository)
+	svc = service.MakeService(logger, mock)
 
-	// user, err := service.Call(context.Background(), "test")
+	svc.CreateUser(ctx, data.UserRequest)
 
 }

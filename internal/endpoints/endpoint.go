@@ -2,34 +2,47 @@ package endpoint
 
 import (
 	"context"
-	"ltgc-api-create-user/internal/entity"
 
-	service "ltgc-api-create-user/internal/service"
+	"ltgc-api-create-user/internal/entity"
+	"ltgc-api-create-user/internal/service"
 
 	"github.com/go-kit/kit/endpoint"
 )
 
-type Endpoint struct {
-	CreateUser endpoint.Endpoint
-}
+// type Endpoint struct {
+// 	CreateUser epkit.Endpoint
+// }
 
-func MakeEndpoint(s service.Service) Endpoint {
-	return Endpoint{
-		CreateUser: makeCreateUserEndpoint(s),
-	}
+// func MakeEndpoints(s service.Service, logger log.Logger) epkit.Endpoint {
+// 	return Endpoint{
+// 		CreateUser: makeCreateUserEndpoint(s, logger),
+// 	}
 
-}
+// }
 
-func makeCreateUserEndpoint(s service.Service) endpoint.Endpoint {
+// func makeCreateUserEndpoint(svc service.Service, logger log.Logger) epkit.Endpoint {
+// 	return func(ctx context.Context, request interface{}) (interface{}, error) {
+
+// 		req, ok := request.(entity.CreateUserRequest)
+// 		if !ok {
+// 			level.Error(logger).Log("message", "invalid request")
+// 			return nil, errors.New("invalid request")
+// 		}
+
+// 		user, err := svc.CreateUser(ctx, req)
+
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		return user, nil
+// 	}
+// }
+
+func MakeServiceEndpoint(ctx context.Context, svc service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 
-		req := request.(entity.CreateUserRequest)
+		req := request.(*entity.CreateUserRequest)
 
-		user, err := s.Call(ctx, req.Name)
-
-		if err != nil {
-			return nil, err
-		}
-		return user, nil
+		return svc.CreateUser(ctx, req)
 	}
 }
