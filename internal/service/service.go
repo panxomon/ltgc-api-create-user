@@ -2,34 +2,40 @@ package service
 
 import (
 	"context"
+	"ltgc-api-create-user/internal/client"
 	"ltgc-api-create-user/internal/entity"
 
 	"github.com/go-kit/kit/log"
 )
 
 type Service interface {
-	Call(ctx context.Context, name string) (*entity.User, error)
+	CreateUser(ctx context.Context, user *entity.CreateUserRequest) (*entity.User, error)
 }
 
 type service struct {
 	logger     log.Logger
-	repository entity.Repository
+	repository client.Repository
 }
 
-func MakeService(log log.Logger, r entity.Repository) Service {
+func MakeService(logger log.Logger, repository client.Repository) Service {
 	return &service{
-		logger:     log,
-		repository: r,
+		logger:     logger,
+		repository: repository,
 	}
 }
 
-func (s service) Call(ctx context.Context, name string) (*entity.User, error) {
+func (s *service) CreateUser(ctx context.Context, req *entity.CreateUserRequest) (*entity.User, error) {
 
-	user, err := s.repository.CreateUser(ctx, name)
+	user := &entity.User{
+		Name:     req.Name,
+		Mail:     req.Mail,
+		Password: req.Password,
+	}
+
+	userEntity, err := s.repository.CreateUser(ctx, user)
 
 	if err != nil {
 		return nil, err
 	}
-
-	return &user, nil
+	return userEntity, nil
 }

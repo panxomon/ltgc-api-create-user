@@ -1,20 +1,33 @@
 package service_test
 
 import (
-	"fmt"
+	"context"
+	"ltgc-api-create-user/internal/client/mocks"
+	"ltgc-api-create-user/internal/service"
+	data "ltgc-api-create-user/internal/service/mocks"
+	"os"
 	"testing"
+
+	"github.com/go-kit/log"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
-func Test_Create_Service_OK(t *testing.T) {
+func Test_service(t *testing.T) {
 
-	//TODO
+	ctx := context.TODO()
+	logger := log.NewJSONLogger(log.NewSyncWriter(os.Stdout))
+	var svc service.Service
+	mockFirestore := new(mocks.Repository)
 
-	fmt.Println("Test_Create_Service_OK")
-	// mockClient := new(MockClient)
-	// mockRepository := new(MockRepository)
+	t.Run("client ok", func(t *testing.T) {
 
-	// service := MakeService(mockClient, mockRepository)
+		mockFirestore.On("CreateUser", mock.Anything, data.UserMock).Return(data.UserMock, nil)
 
-	// user, err := service.Call(context.Background(), "test")
+		svc = service.MakeService(logger, mockFirestore)
 
+		svc.CreateUser(ctx, data.UserRequest)
+
+		assert.Equal(t, data.MockResponse.User.Name, data.UserRequest.Name)
+	})
 }

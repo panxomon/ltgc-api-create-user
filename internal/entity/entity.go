@@ -1,14 +1,8 @@
 package entity
 
-import "context"
-
 type User struct {
-	Id       int64
-	Name     string
-	Mail     string
-	Password string
-}
-
-type Repository interface {
-	CreateUser(ctx context.Context, name string) (User, error)
+	Id       int64  `json:"id"`
+	Name     string `json:"name"`
+	Mail     string `json:"mail"`
+	Password string `json:"password"`
 }

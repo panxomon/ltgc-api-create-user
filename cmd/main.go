@@ -1,76 +1,76 @@
 package main
 
 import (
-	"log"
+	"context"
+	"flag"
+	"fmt"
+	"ltgc-api-create-user/internal/client"
+	endpoint "ltgc-api-create-user/internal/endpoints"
+	h "ltgc-api-create-user/internal/handler"
+	"ltgc-api-create-user/internal/service"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log/level"
+)
+
+var (
+	ctx        context.Context
+	logger     log.Logger
+	listenAddr string
 )
 
 func main() {
 
-	//TODO
+	var httpAddr = flag.String("http", ":8080", "HTTP listen address")
 
-	port := ":8080"
+	var logger log.Logger
 
-	router := http.NewServeMux()
+	{
+		logger = log.NewLogfmtLogger(os.Stderr)
+		logger = log.NewSyncLogger(logger)
+		logger = log.With(logger,
+			"service", "create-user",
+			"time:", log.DefaultTimestampUTC,
+			"caller", log.DefaultCaller,
+		)
+	}
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
-	})
+	level.Info(logger).Log("main", "msg", "service started")
+	defer level.Info(logger).Log("main", "msg", "service ended")
 
-	log.Fatal(http.ListenAndServe(port, router))
+	logger.Log("Server is starting...")
+
+	flag.Parse()
+
+	ctx = context.Background()
+
+	var svc service.Service
+	{
+		firestoreclient := client.NewFirestorerepository("firebase.json", "firebase", "users")
+		svc = service.MakeService(logger, firestoreclient)
+
+	}
+
+	errs := make(chan error)
+
+	go func() {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+		errs <- fmt.Errorf("%s", <-c)
+	}()
+
+	ep := endpoint.MakeServiceEndpoint(ctx, svc)
+
+	go func() {
+		fmt.Println("listening on port", *httpAddr)
+		handler := h.NewHTTPServer(ctx, ep)
+		errs <- http.ListenAndServe(*httpAddr, handler)
+	}()
+
+	level.Error(logger).Log("exit", <-errs)
 
 }
-
-// func main() {
-
-// 	port := ":8080"
-
-// 	router := http.NewServeMux()
-
-// 	// router.HandleFunc("/", CreateCaca("dura"))
-
-// 	log.Fatal(http.ListenAndServe(port, router))
-// }
-
-// func Get(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintf(w, "GET")
-// }
-
-// type HttpCaca func(w http.ResponseWriter, r *http.Request)
-
-// func CreateCaca(s string) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		fmt.Fprintf(w, "desde Crear Caca %s", s)
-// 	}
-// }
-
-// func GetCaca(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintf(w, "Get Caca")
-// }
-
-// type CacaMiddleWare func(http.HandlerFunc) http.HandlerFunc
-
-// func CacaMiddleware(f http.HandlerFunc, middlewares ...CacaMiddleWare) http.HandlerFunc {
-// 	for _, m := range middlewares {
-// 		f = m(f)
-// 	}
-// 	return f
-// }
-
-// func LoggingMiddleware(f http.HandlerFunc) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		log.Println("LoggingMiddleware")
-// 		f(w, r)
-// 	}
-// }
-
-// func RecoveryMiddleware(f http.HandlerFunc) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		defer func() {
-// 			if err := recover(); err != nil {
-// 				log.Println("RecoveryMiddleware", err)
-// 			}
-// 		}()
-// 		f(w, r)
-// 	}
-// }

@@ -1,5 +1,5 @@
 package entity
 
 type CreateUserResponse struct {
-	User User
+	User User `json:"user"`
 }
