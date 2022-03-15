@@ -63,7 +63,6 @@ func main() {
 		errs <- fmt.Errorf("%s", <-c)
 	}()
 
-	// endpoint := endpoint.MakeEndpoints(svc, logger)
 	ep := endpoint.MakeServiceEndpoint(ctx, svc)
 
 	go func() {

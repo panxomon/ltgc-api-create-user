@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	"github.com/go-kit/log"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func Test_service(t *testing.T) {
@@ -16,12 +18,16 @@ func Test_service(t *testing.T) {
 	ctx := context.TODO()
 	logger := log.NewJSONLogger(log.NewSyncWriter(os.Stdout))
 	var svc service.Service
+	mockFirestore := new(mocks.Repository)
 
-	mock := new(mocks.Repository)
-	mock.On("CreateUser", ctx, &data.UserRequest).Return(*data.MockResponse, nil)
+	t.Run("client ok", func(t *testing.T) {
 
-	svc = service.MakeService(logger, mock)
+		mockFirestore.On("CreateUser", mock.Anything, data.UserMock).Return(data.UserMock, nil)
 
-	svc.CreateUser(ctx, data.UserRequest)
+		svc = service.MakeService(logger, mockFirestore)
 
+		svc.CreateUser(ctx, data.UserRequest)
+
+		assert.Equal(t, data.MockResponse.User.Name, data.UserRequest.Name)
+	})
 }
