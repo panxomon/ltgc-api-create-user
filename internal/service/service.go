@@ -9,7 +9,7 @@ import (
 )
 
 type Service interface {
-	CreateUser(ctx context.Context, user *entity.CreateUserRequest) (*entity.User, error)
+	CreateUser(ctx context.Context, user *entity.Request) (*entity.User, error)
 }
 
 type service struct {
@@ -24,7 +24,7 @@ func MakeService(logger log.Logger, repository client.Repository) Service {
 	}
 }
 
-func (s *service) CreateUser(ctx context.Context, req *entity.CreateUserRequest) (*entity.User, error) {
+func (s *service) CreateUser(ctx context.Context, req *entity.Request) (*entity.User, error) {
 
 	user := &entity.User{
 		Name:     req.Name,

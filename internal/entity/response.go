@@ -1,5 +1,5 @@
 package entity
 
-type CreateUserResponse struct {
+type Response struct {
 	User User `json:"user"`
 }

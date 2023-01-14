@@ -15,11 +15,11 @@ type Service struct {
 }
 
 // CreateUser provides a mock function with given fields: ctx, user
-func (_m *Service) CreateUser(ctx context.Context, user *entity.CreateUserRequest) (*entity.User, error) {
+func (_m *Service) CreateUser(ctx context.Context, user *entity.Request) (*entity.User, error) {
 	ret := _m.Called(ctx, user)
 
 	var r0 *entity.User
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.CreateUserRequest) *entity.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Request) *entity.User); ok {
 		r0 = rf(ctx, user)
 	} else {
 		if ret.Get(0) != nil {
@@ -28,7 +28,7 @@ func (_m *Service) CreateUser(ctx context.Context, user *entity.CreateUserReques
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, *entity.CreateUserRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *entity.Request) error); ok {
 		r1 = rf(ctx, user)
 	} else {
 		r1 = ret.Error(1)

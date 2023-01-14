@@ -5,7 +5,7 @@ import (
 	entity "ltgc-api-create-user/internal/entity"
 )
 
-var UserRequest *entity.CreateUserRequest = &entity.CreateUserRequest{
+var UserRequest *entity.Request = &entity.Request{
 	Name:     "Pancho",
 	Password: "123",
 	Mail:     "francisco.mfu@lala.com",
@@ -17,14 +17,14 @@ var UserMock *entity.User = &entity.User{
 	Mail:     "francisco.mfu@lala.com",
 }
 
-var MockResponse *entity.CreateUserResponse = &entity.CreateUserResponse{
+var MockResponse *entity.Response = &entity.Response{
 	User: *UserMock,
 }
 
 var ErrorComun = "error"
 
-func CreateUserOK(_ context.Context, _ entity.CreateUserRequest) (response *entity.CreateUserResponse, err error) {
-	return &entity.CreateUserResponse{
+func CreateUserOK(_ context.Context, _ entity.Request) (response *entity.Response, err error) {
+	return &entity.Response{
 		User: *UserMock,
 	}, nil
 }

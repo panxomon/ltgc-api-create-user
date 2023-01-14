@@ -12,7 +12,7 @@ import (
 func MakeServiceEndpoint(ctx context.Context, svc service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 
-		req := request.(*entity.CreateUserRequest)
+		req := request.(*entity.Request)
 
 		return svc.CreateUser(ctx, req)
 	}
